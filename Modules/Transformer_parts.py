@@ -54,7 +54,7 @@ class Head(nn.Module):
     return out.to(device), k.to(device), v.to(device), q.to(device)
 #-------------------------------------------------------------------------------
 class MultiHeadAttention(nn.Module):
-  def __init__(self, num_heads, n_embed, head_size, decoder = True, cross_attention = False):
+  def __init__(self, num_heads, n_embed, decoder = True, cross_attention = False):
     super(MultiHeadAttention, self).__init__()
     self.head_size_Multi = n_embed // num_heads
     self.heads = nn.ModuleList([Head(n_embed, self.head_size_Multi, decoder = decoder, cross_attention = cross_attention) for _ in range(num_heads)]) # list of heads (B, T, Head_size)
@@ -81,8 +81,10 @@ class FeedForward(nn.Module):
     super(FeedForward, self).__init__()
     self.MLP = nn.Sequential(
         nn.Linear(n_embed, 4 * n_embed),
-        nn.ReLU(),
+        nn.LeakyReLU(),
         nn.Linear(4 * n_embed, n_embed),
+        nn.LeakyReLU(),
+        nn.Linear(n_embed, head_size),
         nn.Dropout(dropout)
     )
   def forward(self, x):
@@ -90,10 +92,10 @@ class FeedForward(nn.Module):
     return x.to(device)
 #-------------------------------------------------------------------------------
 class encoderBlock(nn.Module):
-  def __init__(self, num_heads, n_embed, head_size):
+  def __init__(self, num_heads, n_embed, latent_size, head_size):
     super(encoderBlock, self).__init__()
     self.multi_head = MultiHeadAttention(num_heads, n_embed, head_size, decoder = False)
-    self.feed_forward = FeedForward(n_embed, head_size)
+    self.feed_forward = FeedForward(n_embed, latent_size)
     self.LN1 = nn.LayerNorm(n_embed)
     self.LN2 = nn.LayerNorm(n_embed)
 
@@ -126,3 +128,4 @@ class DecoderBlock(nn.Module):
     ffwd_out = self.feed_forward(self.LN3(x))
     x = x + ffwd_out # Residual connection
     return x.to(device)
+#-------------------------------------------------------------------------------
