@@ -7,13 +7,6 @@ class TDR(nn.Module):
 
     def __init__(self, n_embed, point_size, latent_size, head_size, num_of_feat, num_heads, max_point_size):
         super(TDR, self).__init__()
-        self.n_embded = n_embed
-        self.point_size = point_size
-        self.latent_size = latent_size
-        self.head_size = head_size
-        self.num_of_feat = num_of_feat
-        self.num_heads = num_heads
-        self.max_point_size = max_point_size
         self.feature_map = feature_map_AE(latent_size=latent_size, num_of_feat=num_of_feat)
         self.dynamic_dec = DynamicDecoder(latent_size=latent_size, 
                                           point_size=point_size,
