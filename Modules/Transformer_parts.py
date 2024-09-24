@@ -83,8 +83,6 @@ class FeedForward(nn.Module):
         nn.Linear(n_embed, 4 * n_embed),
         nn.LeakyReLU(),
         nn.Linear(4 * n_embed, n_embed),
-        nn.LeakyReLU(),
-        nn.Linear(n_embed, head_size),
         nn.Dropout(dropout)
     )
   def forward(self, x):

@@ -1,7 +1,8 @@
 import torch.nn as nn
 import torch
-from models.s3dis.mpvcnnpp import MPVCNN2
+from Modules.MPVConv.models.s3dis.mpvcnnpp import MPVCNN2
 from ply_autoenc import AE_ply
+
 
 class feature_map_AE(nn.Module):
   def __init__(self, latent_size ,num_of_feat):

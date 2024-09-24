@@ -1,7 +1,7 @@
 import torch.functional as F
 import torch.nn as nn
-from Modules.feature_map import feature_map_AE
 from Modules.Dynamic_dec import DynamicDecoder
+from Modules.feature_map import feature_map_AE
 
 class TDR(nn.Module):
 
@@ -26,4 +26,4 @@ class TDR(nn.Module):
         loss = mse(out, x)
 
         return out, loss
-        
+       

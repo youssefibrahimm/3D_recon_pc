@@ -1,6 +1,12 @@
+import sys
+# add your path to the sys 
+sys.path.insert(0, 'C:\\Users\\youss\\OneDrive - aucegypt.edu\\Youssef\\3D_recon_pc')
+print(sys.path)
+
+
 import torch.nn as nn
 import torch.nn.functional as F
-from Transformer_parts import MultiHeadAttention, DecoderBlock
+from Modules.Transformer_parts import MultiHeadAttention, DecoderBlock
 class DynamicDecoder(nn.Module):
     def __init__(self, latent_size, point_size, max_point_size, num_heads, n_embed, head_size):
         super(DynamicDecoder, self).__init__()

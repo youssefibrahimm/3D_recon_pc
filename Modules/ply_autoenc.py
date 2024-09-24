@@ -1,4 +1,8 @@
-from modules import MPVConv
+# import sys 
+# sys.path.insert(0, 'Modules')
+
+
+from MPVConv.modules.mpvconv import MPVConv
 from Transformer_parts import encoderBlock
 import torch.nn as nn
 class AE_ply(nn.Module):
