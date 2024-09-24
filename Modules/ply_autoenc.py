@@ -1,6 +1,7 @@
-# import sys 
-# sys.path.insert(0, 'Modules')
-
+import sys
+# add your path to the sys 
+sys.path.insert(0, 'C:\\Users\\youss\\OneDrive - aucegypt.edu\\Youssef\\3D_recon_pc')
+# print(sys.path)
 
 from MPVConv.modules.mpvconv import MPVConv
 from Transformer_parts import encoderBlock
