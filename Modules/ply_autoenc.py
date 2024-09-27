@@ -11,9 +11,9 @@ class AE_ply(nn.Module):
     super(AE_ply, self).__init__()  
     self.latent_size = latent_size
     self.n_embed = n_embed
-    self.mpvConv1 = MPVConv(3, 64)
-    self.mpvConv2 = MPVConv(64, 128)
-    self.mpvConv3 = MPVConv(128, latent_size, 1)
+    self.mpvConv1 = MPVConv(3, 64, resolution=32, kernel_size=1)
+    self.mpvConv2 = MPVConv(64, 128, resolution=32, kernel_size=1)
+    self.mpvConv3 = MPVConv(128, latent_size, resolution=32, kernel_size=1)
 
     # Linear layer to project latent_size to n_embed
     self.latent_to_embed = nn.Linear(latent_size, n_embed)
