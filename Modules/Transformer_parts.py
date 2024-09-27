@@ -106,9 +106,9 @@ class encoderBlock(nn.Module):
     return x.to(device), k.to(device), v.to(device)
 #-------------------------------------------------------------------------------
 class DecoderBlock(nn.Module):
-  def __init__(self, num_heads, n_embed, head_size):
+  def __init__(self, num_heads, n_embed):
     super(DecoderBlock, self).__init__()
-    self.multi_head = MultiHeadAttention(num_heads, n_embed, head_size, cross_attention=True, decoder=True) # decoder is initialized to True
+    self.multi_head = MultiHeadAttention(num_heads, n_embed, cross_attention=True, decoder=True) # decoder is initialized to True
     self.feed_forward = FeedForward(n_embed)
     self.LN1 = nn.LayerNorm(n_embed)
     self.LN2 = nn.LayerNorm(n_embed)

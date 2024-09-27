@@ -8,7 +8,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from Modules.Transformer_parts import MultiHeadAttention, DecoderBlock
 class DynamicDecoder(nn.Module):
-    def __init__(self, latent_size, point_size, max_point_size, num_heads, n_embed, head_size):
+    def __init__(self, latent_size, point_size, max_point_size, num_heads, n_embed):
         super(DynamicDecoder, self).__init__()
         
         self.latent_size = latent_size
@@ -21,10 +21,10 @@ class DynamicDecoder(nn.Module):
         self.fc3 = nn.Linear(512, max_point_size * 3)  # Output max number of points
 
         # Multi-Head Attention for dynamic selection
-        self.attention_layer = MultiHeadAttention(num_heads=num_heads, n_embed=n_embed, head_size=head_size, decoder=False)
+        self.attention_layer = MultiHeadAttention(num_heads=num_heads, n_embed=n_embed, decoder=False)
 
         # Further processing with feedforward layers and decoder blocks
-        self.decoder_block = DecoderBlock(num_heads=num_heads, n_embed=n_embed, head_size=head_size)
+        self.decoder_block = DecoderBlock(num_heads=num_heads, n_embed=n_embed)
 
     def forward(self, latent, k_encoder, v_encoder):
         """

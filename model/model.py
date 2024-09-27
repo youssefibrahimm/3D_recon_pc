@@ -5,15 +5,15 @@ from Modules.feature_map import feature_map_AE
 
 class TDR(nn.Module):
 
-    def __init__(self, n_embed, point_size, latent_size, head_size, num_of_feat, num_heads, max_point_size):
+    def __init__(self, n_embed, point_size, latent_size, num_of_feat, num_heads, max_point_size):
         super(TDR, self).__init__()
-        self.feature_map = feature_map_AE(latent_size=latent_size, num_of_feat=num_of_feat, n_embed=n_embed, head_size=head_size)
+        self.feature_map = feature_map_AE(latent_size=latent_size, num_of_feat=num_of_feat, n_embed=n_embed)
         self.dynamic_dec = DynamicDecoder(latent_size=latent_size, 
                                           point_size=point_size,
                                           max_point_size=max_point_size,
                                           num_heads=num_heads,
-                                          n_embed=n_embed,
-                                          head_size=head_size)
+                                          n_embed=n_embed
+                                          )
         
 
     def forward(self, x):

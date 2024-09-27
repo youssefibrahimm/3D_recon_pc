@@ -7,7 +7,7 @@ from MPVConv.modules.mpvconv import MPVConv
 from Transformer_parts import encoderBlock
 import torch.nn as nn
 class AE_ply(nn.Module):
-  def __init__(self, latent_size, n_embed, head_size):
+  def __init__(self, latent_size, n_embed):
     super(AE_ply, self).__init__()  
     self.latent_size = latent_size
     self.n_embed = n_embed
