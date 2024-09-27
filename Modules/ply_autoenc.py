@@ -19,7 +19,7 @@ class AE_ply(nn.Module):
     self.latent_to_embed = nn.Linear(latent_size, n_embed)
 
     # Encoder block expecting (batch_size, num_points, n_embed)
-    self.encoder = encoderBlock(n_embed=n_embed, latent_size=latent_size, num_heads=2, head_size=head_size )
+    self.encoder = encoderBlock(n_embed=n_embed, num_heads=2)
     # Linear layer to project n_embed back to latent_size
     self.embed_to_latent = nn.Linear(n_embed, latent_size)
 

@@ -17,7 +17,7 @@ class feature_map_AE(nn.Module):
     # adding a new last layer
     self.linear = nn.Linear(num_of_feat, latent_size)
     self.batch_norm = nn.BatchNorm1d(latent_size, momentum= 0.01)
-    self.Auto_enc = AE_ply(latent_size=latent_size, n_embed=n_embed, head_size=head_size)
+    self.Auto_enc = AE_ply(latent_size=latent_size, n_embed=n_embed)
 
   def feat_map(self, ply):
     # ply should be a tuple containig features (Batch_size, Channel_in, Num_points) and coords (Batch_size, 3, Num_points)

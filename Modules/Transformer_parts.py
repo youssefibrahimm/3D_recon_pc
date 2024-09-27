@@ -55,6 +55,7 @@ class Head(nn.Module):
 #-------------------------------------------------------------------------------
 class MultiHeadAttention(nn.Module):
   def __init__(self, num_heads, n_embed, decoder = True, cross_attention = False):
+
     super(MultiHeadAttention, self).__init__()
     self.head_size_Multi = n_embed // num_heads
     self.heads = nn.ModuleList([Head(n_embed, self.head_size_Multi, decoder = decoder, cross_attention = cross_attention) for _ in range(num_heads)]) # list of heads (B, T, Head_size)
@@ -77,7 +78,7 @@ class MultiHeadAttention(nn.Module):
     return out.to(device) , keys.to(device), values.to(device), queries.to(device)
 #-------------------------------------------------------------------------------
 class FeedForward(nn.Module):
-  def __init__(self, n_embed, head_size):
+  def __init__(self, n_embed):
     super(FeedForward, self).__init__()
     self.MLP = nn.Sequential(
         nn.Linear(n_embed, 4 * n_embed),
@@ -90,10 +91,10 @@ class FeedForward(nn.Module):
     return x.to(device)
 #-------------------------------------------------------------------------------
 class encoderBlock(nn.Module):
-  def __init__(self, num_heads, n_embed, latent_size, head_size):
+  def __init__(self, num_heads, n_embed):
     super(encoderBlock, self).__init__()
-    self.multi_head = MultiHeadAttention(num_heads, n_embed, head_size, decoder = False, cross_attention=False)
-    self.feed_forward = FeedForward(n_embed, latent_size)
+    self.multi_head = MultiHeadAttention(num_heads, n_embed, decoder = False, cross_attention=False)
+    self.feed_forward = FeedForward(n_embed)
     self.LN1 = nn.LayerNorm(n_embed)
     self.LN2 = nn.LayerNorm(n_embed)
 
@@ -108,7 +109,7 @@ class DecoderBlock(nn.Module):
   def __init__(self, num_heads, n_embed, head_size):
     super(DecoderBlock, self).__init__()
     self.multi_head = MultiHeadAttention(num_heads, n_embed, head_size, cross_attention=True, decoder=True) # decoder is initialized to True
-    self.feed_forward = FeedForward(n_embed, head_size)
+    self.feed_forward = FeedForward(n_embed)
     self.LN1 = nn.LayerNorm(n_embed)
     self.LN2 = nn.LayerNorm(n_embed)
     self.LN3 = nn.LayerNorm(n_embed)
