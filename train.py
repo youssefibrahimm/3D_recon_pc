@@ -10,5 +10,5 @@ num_decoder_blocks = 2
  
 model = TDR(n_embed, 231666, 4096,256, num_heads, 500000)
 
-parameters = [p for p in model.parameters()]
-print(len(parameters))
+parameters = [p.numel() for p in model.parameters()]
+print(sum(parameters))

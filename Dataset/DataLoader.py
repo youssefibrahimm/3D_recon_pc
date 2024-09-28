@@ -5,7 +5,6 @@ class Read_ply(Dataset):
     def __init__(self, ply_path):
         super(Read_ply, self).__init__()
         self.ply = ply_path
-        # self.points = np.asarray(o3d.io.read_point_cloud(self.ply).points).reshape(3,-1)
     
     def __len__(self):
         return len(self.ply)
@@ -15,8 +14,8 @@ class Read_ply(Dataset):
         return points, points
 
     def collate__fn(self, points):
-        features = np.stack(p[0] for p in points) # (B, 3, N)
-        coordintates = np.stack(p[1] for p in points) # (B, 3, N)
+        features = np.stack([p[0] for p in points], axis = 0) # (B, 3, N)
+        coordintates = np.stack([p[1] for p in points], axis = 0) # (B, 3, N)
         return features, coordintates  
 
 def RandomSplit(datasets, train_set_percentage):
@@ -36,5 +35,3 @@ def GetDataLoader(ply_path, batch_size, train_set_percentage=0.9,shuffle=True, d
     train_dl = DataLoader(train_set, batch_size=batch_size, shuffle=shuffle, drop_last=drop_last, collate_fn=ds.collate__fn)
     
     return train_dl, test_dl
-
-    
