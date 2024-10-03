@@ -20,9 +20,13 @@ class TDR(nn.Module):
         out_features, k_enc, v_enc = self.feature_map(x) # shape out_features: (batch_size, Num_points, latent_size)
         out = self.dynamic_dec(out_features, k_enc, v_enc) # shape out: (batch_size, Num_points, 3)
 
+        out = out.permute(0, 2, 1) # shape out: (batch_size, 3, Num_points)
+        # Check if output and input shapes match
+        assert out.shape == x.shape, f"Output shape {out.shape} and input shape {x.shape} do not match!"
+
         # now using MSE for lack of computational power 
         # better use chamfer loss from pytorch3d
-        mse = nn.MSELoss
+        mse = nn.MSELoss()
         loss = mse(out, x)
 
         return out, loss
