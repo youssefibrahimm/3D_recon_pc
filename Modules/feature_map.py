@@ -31,7 +31,7 @@ class feature_map_AE(nn.Module):
     print(f'feature_2 after mean:{ features_2.shape}')
     linear_layer = self.linear(features_2)
     print(f'linear_layer:{ linear_layer.shape}')
-    feat_3 = self.layer_norm(linear_layer).unsqueeze(1) # (batch_size, latent_size, 1)
+    feat_3 = self.layer_norm(linear_layer).unsqueeze(2) # (batch_size, latent_size, 1)
     print(f'feat_3:{feat_3.shape}')
     features_3 = feat_3.expand(-1, -1, features_1.size(2)) # (batch_size, latent_size, num_of_points)
     print(f'features_3_expand:{features_3.shape}')
