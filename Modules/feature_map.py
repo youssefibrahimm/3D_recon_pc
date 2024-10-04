@@ -10,18 +10,18 @@ from ply_autoenc import AE_ply
 
 
 class feature_map_AE(nn.Module):
-  def __init__(self, latent_size, num_of_feat, n_embed):
+  def __init__(self, latent_size, num_of_feat, n_embed, width_multiplier):
     super(feature_map_AE, self).__init__()
     self.latent_size = latent_size
-    self.mpvcnn = MPVCNN2(num_of_feat)
+    self.mpvcnn = MPVCNN2(num_of_feat, width_multiplier=width_multiplier)
     # adding a new last layer
-    self.linear = nn.Linear(num_of_feat, latent_size)
+    self.linear = nn.Linear(num_of_feat*width_multiplier, latent_size)
     self.batch_norm = nn.BatchNorm1d(latent_size, momentum= 0.01)
     self.Auto_enc = AE_ply(latent_size=latent_size, n_embed=n_embed)
 
   def feat_map(self, ply):
     # ply should be a tuple containig features (Batch_size, Channel_in, Num_points) and coords (Batch_size, 3, Num_points)
-    features, coords = ply
+    features, coords = ply, ply[:,:3,:].contiguous()
     features_1 = self.mpvcnn(features) # (batch_size, num_of_feat, num_of_points)
     features_2 = features_1.mean(dim=2) # (batch_size, num_of_feat)
 

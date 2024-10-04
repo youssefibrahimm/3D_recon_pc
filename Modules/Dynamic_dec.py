@@ -1,12 +1,7 @@
-import sys
-# add your path to the sys 
-sys.path.insert(0, 'C:\\Users\\youss\\OneDrive - aucegypt.edu\\Youssef\\3D_recon_pc')
-# print(sys.path)
-
-
 import torch.nn as nn
 import torch.nn.functional as F
 from Modules.Transformer_parts import MultiHeadAttention, DecoderBlock
+
 class DynamicDecoder(nn.Module):
     def __init__(self, latent_size, point_size, max_point_size, num_heads, n_embed):
         super(DynamicDecoder, self).__init__()
@@ -17,11 +12,8 @@ class DynamicDecoder(nn.Module):
         
         # Fully connected layers for initial reconstruction
         self.fc1 = nn.Linear(latent_size, 512)
-        print("fc1 weight shape:", self.fc1.weight.shape)
         self.fc2 = nn.Linear(512, 512)
-        print("fc2 weight shape:", self.fc2.weight.shape)
         self.fc3 = nn.Linear(512, max_point_size * 3)  # Output max number of points
-        print("fc3 weight shape:", self.fc3.weight.shape)
 
         # Multi-Head Attention for dynamic selection
         self.attention_layer = MultiHeadAttention(num_heads=num_heads, n_embed=n_embed, decoder=False)
@@ -53,4 +45,3 @@ class DynamicDecoder(nn.Module):
 
 
         return selected_points
-
