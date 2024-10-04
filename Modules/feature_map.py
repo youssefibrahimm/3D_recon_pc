@@ -37,9 +37,9 @@ class feature_map_AE(nn.Module):
     print(f'features_3_expand:{features_3.shape}')
 
     # Combine the coordinates with the features
-    coords_expanded = coords.unsqueeze(1).expand(-1, 3, -1) # (batch_size, 3, num_of_points)
-    features_3 = torch.cat([coords_expanded, features_3], dim=1)  # (batch_size, 3+latent_size, num_of_points)
-    return features_3, coords_expanded 
+    # coords_expanded = coords.unsqueeze(1).expand(-1, 3, -1) # (batch_size, 3, num_of_points)
+    features_3 = torch.cat([coords, features_3], dim=1)  # (batch_size, 3+latent_size, num_of_points)
+    return features_3, coords 
   
   def forward(self, ply):
    feat_map, coords = self.feat_map(ply)
