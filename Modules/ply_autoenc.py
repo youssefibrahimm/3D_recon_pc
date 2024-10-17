@@ -7,21 +7,22 @@ from MPVConv.modules.mpvconv import MPVConv
 from Transformer_parts import encoderBlock
 import torch.nn as nn
 class AE_ply(nn.Module):
-  def __init__(self, latent_size, n_embed):
+  def __init__(self, latent_size, n_embed, kernel_size):
     super(AE_ply, self).__init__()  
     self.latent_size = latent_size
     self.n_embed = n_embed
-    self.mpvConv1 = MPVConv(3+latent_size, 64, resolution=32, kernel_size=1)
+    self.kernel_size = kernel_size
+    self.mpvConv1 = MPVConv(3+latent_size, 64, resolution=32, kernel_size=self.kernel_size)
     self.mpvConv2 = MPVConv(64, 128, resolution=32, kernel_size=1)
-    self.mpvConv3 = MPVConv(128, latent_size, resolution=32, kernel_size=1)
+    self.mpvConv3 = MPVConv(128, latent_size, resolution=32, kernel_size=self.kernel_size)
 
     # Linear layer to project latent_size to n_embed
-    self.latent_to_embed = nn.Linear(latent_size, n_embed)
+    self.latent_to_embed = nn.Linear(self.latent_size, self.n_embed)
 
     # Encoder block expecting (batch_size, num_points, n_embed)
-    self.encoder = encoderBlock(n_embed=n_embed, num_heads=2)
+    self.encoder = encoderBlock(n_embed=self.n_embed, num_heads=2)
     # Linear layer to project n_embed back to latent_size
-    self.embed_to_latent = nn.Linear(n_embed, latent_size)
+    self.embed_to_latent = nn.Linear(self.n_embed, self.latent_size)
 
   def forward(self, input):
     # input should be a tuple containig features (Batch_size, Channel_in, Num_points) and coords (Batch_size, 3, Num_points)

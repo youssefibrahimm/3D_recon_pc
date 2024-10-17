@@ -3,7 +3,16 @@ import torch.nn.functional as F
 from Modules.Transformer_parts import MultiHeadAttention, DecoderBlock
 
 class DynamicDecoder(nn.Module):
-    def __init__(self, latent_size, point_size, max_point_size, num_heads, n_embed):
+    def __init__(self, latent_size, point_size, max_point_size, num_heads, n_embed):  
+        """
+        Initialization of the DynamicDecoder.
+        
+        :param latent_size: Number of features in the latent representation.
+        :param point_size: Number of points in the original point cloud.
+        :param max_point_size: Maximum number of points the decoder should output.
+        :param num_heads: Number of attention heads.
+        :param n_embed: Number of features in each point.
+        """ 
         super(DynamicDecoder, self).__init__()
         
         self.latent_size = latent_size

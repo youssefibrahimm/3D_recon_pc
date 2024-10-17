@@ -10,14 +10,31 @@ from ply_autoenc import AE_ply
 
 
 class feature_map_AE(nn.Module):
-  def __init__(self, latent_size, num_of_feat, n_embed, width_multiplier):
+  def __init__(self, latent_size, num_of_feat, n_embed, kernel_size,width_multiplier):
+    """ 
+    Initializes the feature_map_AE module.
+
+    Parameters:
+        latent_size (int): The size of the latent space.
+        num_of_feat (int): The number of features.
+        n_embed (int): The embedding size.
+        width_multiplier (int): The width multiplier.
+
+    Attributes:
+        latent_size (int): The size of the latent space.
+        mpvcnn (MPVCNN2): The MPVCNN2 instance.
+        linear (nn.Linear): Linear layer for the last layer.
+        layer_norm (nn.LayerNorm): Layer normalization instance.
+        Auto_enc (AE_ply): The AE_ply instance.
+
+    """
     super(feature_map_AE, self).__init__()
     self.latent_size = latent_size
     self.mpvcnn = MPVCNN2(num_of_feat, width_multiplier=width_multiplier)
     # adding a new last layer
     self.linear = nn.Linear(num_of_feat*width_multiplier, latent_size)
     self.layer_norm = nn.LayerNorm(latent_size)
-    self.Auto_enc = AE_ply(latent_size=latent_size, n_embed=n_embed)
+    self.Auto_enc = AE_ply(latent_size=latent_size, n_embed=n_embed, kernel_size=kernel_size)
 
   def feat_map(self, ply):
     # ply should be a tuple containig features (Batch_size, Channel_in, Num_points) and coords (Batch_size, 3, Num_points)
