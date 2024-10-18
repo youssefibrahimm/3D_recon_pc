@@ -4,16 +4,16 @@ from Modules.Dynamic_dec import DynamicDecoder
 from Modules.feature_map import feature_map_AE
 class TDR(nn.Module):
 
-    def __init__(self, n_embed, point_size, latent_size, num_of_feat, num_heads, max_point_size, kernel_size, width_multiplier):
+    def __init__(self, n_embed, point_size, latent_size, num_of_feat, num_heads, max_point_size, kernel_size, width_multiplier, isConv=True):
         super(TDR, self).__init__()
-        self.feature_map = feature_map_AE(latent_size=latent_size, num_of_feat=num_of_feat, n_embed=n_embed, kernel_size=kernel_size, width_multiplier=width_multiplier)
+        self.feature_map = feature_map_AE(latent_size=latent_size, num_of_feat=num_of_feat, n_embed=n_embed, kernel_size=kernel_size, width_multiplier=width_multiplier, num_points=point_size, isConv=isConv)
         self.dynamic_dec = DynamicDecoder(latent_size=latent_size, 
                                           point_size=point_size,
                                           max_point_size=max_point_size,
                                           num_heads=num_heads,
                                           n_embed=n_embed
                                           )
-        
+        self.mse = nn.MSELoss()
 
     def forward(self, x):
         out_features, k_enc, v_enc = self.feature_map(x) # shape out_features: (batch_size, Num_points, latent_size)
@@ -25,8 +25,8 @@ class TDR(nn.Module):
 
         # now using MSE for lack of computational power 
         # better use chamfer loss from pytorch3d
-        mse = nn.MSELoss()
-        loss = mse(out, x)
+       
+        loss = self.mse(out, x)
 
         return out, loss
        
