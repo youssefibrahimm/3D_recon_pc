@@ -58,7 +58,7 @@ class feature_map_AE(nn.Module):
         feat_pred = features_1[:,feat_idx,:]
         pred_points.append(feat_pred) 
 
-      features_2 = torch.mean(torch.stack(pred_points), dim=0) # (batch_size, num_of_points)
+      features_2 = torch.mean(torch.stack(pred_points, dim=1), dim=2) # (batch_size, num_of_feat)
       # project to latent_size
       linear_layer = self.linear(features_2)
       print(f'linear_layer:{ linear_layer.shape}')
