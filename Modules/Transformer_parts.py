@@ -64,6 +64,10 @@ class MultiHeadAttention(nn.Module):
 
   def forward(self, x,  k_cross=None, q_cross=None, v_cross=None):
     # concatenating them on the head_size dim = (B, T, head_size_Multi * num_heads) which gives the wanted head size (head_size)
+    for i, h in enumerate(self.heads):
+      out_i = h(x)[0]
+      print(f"Shape of head {i} output: {out_i.shape}")
+
     out = torch.cat([h(x)[0] for h in self.heads], dim = -1)
 
     # get the keys and values to pass them from the encoder to the decoder for cross-attention
