@@ -38,7 +38,7 @@ class AE_ply(nn.Module):
     # Encoder block expecting (batch_size, num_points, n_embed)
     self.encoder = encoderBlock(n_embed=self.n_embed, dropout=dropout, num_heads=2)
     # Linear layer to project n_embed back to latent_size
-    self.embed_to_latent = nn.Linear(self.n_embed, self.latent_size)
+    # self.embed_to_latent = nn.Linear(self.n_embed, self.latent_size)
 
   def forward(self, input):
     # input should be a tuple containig features (Batch_size, Channel_in, Num_points) and coords (Batch_size, 3, Num_points)
@@ -48,5 +48,4 @@ class AE_ply(nn.Module):
     out_down = self.downsampling_NumPoints(x) # (batch_size, Num_points=11597, n_embed)
     print(f'auto_enc before encoder: {out_down.shape}')
     enc_out, k_enc, v_enc = self.encoder(out_down) # (batch_size, Num_points, n_embed)
-    x = self.embed_to_latent(enc_out) # (batch_size, Num_points, latent_size)
-    return x, k_enc, v_enc
+    return enc_out, k_enc, v_enc
