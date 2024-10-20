@@ -5,16 +5,10 @@ from sys import modules
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 #-------------------------------------------------------------------------------
-block_size = 32
-dropout = 0.4
-n_embed = 128
-num_heads = 2
-head_size = 8
-num_encoder_blocks = 2
-num_decoder_blocks = 2
-#-------------------------------------------------------------------------------
+
+
 class Head(nn.Module):
-  def __init__(self, n_embed, head_size, decoder = True, cross_attention = False):
+  def __init__(self, n_embed, head_size, dropout, decoder = True, cross_attention = False):
     super(Head, self).__init__()
     # key, query, value matrices (no need for bias)
     self.cross_attention = cross_attention
@@ -55,11 +49,11 @@ class Head(nn.Module):
     return out.to(device), k.to(device), v.to(device), q.to(device)
 #-------------------------------------------------------------------------------
 class MultiHeadAttention(nn.Module):
-  def __init__(self, num_heads, n_embed, decoder = True, cross_attention = False):
+  def __init__(self, num_heads, dropout, n_embed, decoder = True, cross_attention = False):
 
     super(MultiHeadAttention, self).__init__()
     self.head_size_Multi = n_embed // num_heads
-    self.heads = nn.ModuleList([Head(n_embed, self.head_size_Multi, decoder = decoder, cross_attention = cross_attention) for _ in range(num_heads)]) # list of heads (B, T, Head_size)
+    self.heads = nn.ModuleList([Head(n_embed, self.head_size_Multi, dropout, decoder = decoder, cross_attention = cross_attention) for _ in range(num_heads)]) # list of heads (B, T, Head_size)
     self.projection = nn.Linear(n_embed, n_embed)
     self.dropout = nn.Dropout(dropout)
 
@@ -83,7 +77,7 @@ class MultiHeadAttention(nn.Module):
     return out.to(device) , keys.to(device), values.to(device), queries.to(device)
 #-------------------------------------------------------------------------------
 class FeedForward(nn.Module):
-  def __init__(self, n_embed):
+  def __init__(self, n_embed, dropout):
     super(FeedForward, self).__init__()
     self.MLP = nn.Sequential(
         nn.Linear(n_embed, 4 * n_embed),
@@ -96,10 +90,10 @@ class FeedForward(nn.Module):
     return x.to(device)
 #-------------------------------------------------------------------------------
 class encoderBlock(nn.Module):
-  def __init__(self, num_heads, n_embed):
+  def __init__(self, num_heads, n_embed, dropout):
     super(encoderBlock, self).__init__()
-    self.multi_head = MultiHeadAttention(num_heads, n_embed, decoder = False, cross_attention=False)
-    self.feed_forward = FeedForward(n_embed)
+    self.multi_head = MultiHeadAttention(num_heads, dropout, n_embed,decoder = False, cross_attention=False)
+    self.feed_forward = FeedForward(n_embed, dropout)
     self.LN1 = nn.LayerNorm(n_embed)
     self.LN2 = nn.LayerNorm(n_embed)
 
@@ -111,9 +105,9 @@ class encoderBlock(nn.Module):
     return x.to(device), k.to(device), v.to(device)
 #-------------------------------------------------------------------------------
 class DecoderBlock(nn.Module):
-  def __init__(self, num_heads, n_embed):
+  def __init__(self, num_heads, n_embed, dropout):
     super(DecoderBlock, self).__init__()
-    self.multi_head = MultiHeadAttention(num_heads, n_embed, cross_attention=True, decoder=True) # decoder is initialized to True
+    self.multi_head = MultiHeadAttention(num_heads, dropout, n_embed, cross_attention=True, decoder=True) # decoder is initialized to True
     self.feed_forward = FeedForward(n_embed)
     self.LN1 = nn.LayerNorm(n_embed)
     self.LN2 = nn.LayerNorm(n_embed)

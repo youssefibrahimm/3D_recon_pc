@@ -29,7 +29,7 @@ class feature_map_AE(nn.Module):
       Auto_enc (AE_ply): The AE_ply instance.
 
   """
-  def __init__(self, latent_size, num_of_feat, n_embed, kernel_size, width_multiplier, num_points, isConv=True):
+  def __init__(self, latent_size, num_of_feat, n_embed, kernel_size, width_multiplier, num_points, isConv=True, dropout=0.3):
     super(feature_map_AE, self).__init__()
     assert kernel_size>=3, f"kernel_size shoud be at least 3, but got {kernel_size}"
 
@@ -41,7 +41,7 @@ class feature_map_AE(nn.Module):
     self.linear = nn.Linear(num_of_feat*width_multiplier, latent_size)
     self.conv1x1 = nn.Conv1d(num_of_feat*width_multiplier, out_channels=1, kernel_size=kernel_size, stride=(num_points//self.latent_size))
     self.layer_norm = nn.LayerNorm(latent_size)
-    self.Auto_enc = AE_ply(latent_size=latent_size, n_embed=n_embed, kernel_size=kernel_size)
+    self.Auto_enc = AE_ply(latent_size=latent_size, n_embed=n_embed, kernel_size=kernel_size, dropout=dropout)
 
   def feat_map(self, ply):
     # ply should be a tuple containig features (Batch_size, Channel_in, Num_points) and coords (Batch_size, 3, Num_points)

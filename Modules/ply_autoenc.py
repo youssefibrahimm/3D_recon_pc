@@ -12,7 +12,7 @@ class Transpose_layer(nn.Module):
     return x.transpose(1,2)
     
 class AE_ply(nn.Module):
-  def __init__(self, latent_size, n_embed, kernel_size):
+  def __init__(self, latent_size, n_embed, kernel_size, dropout=0.3):
     super(AE_ply, self).__init__()  
     self.latent_size = latent_size
     self.n_embed = n_embed
@@ -36,7 +36,7 @@ class AE_ply(nn.Module):
     )
 
     # Encoder block expecting (batch_size, num_points, n_embed)
-    self.encoder = encoderBlock(n_embed=self.n_embed, num_heads=2)
+    self.encoder = encoderBlock(n_embed=self.n_embed, dropout=dropout, num_heads=2)
     # Linear layer to project n_embed back to latent_size
     self.embed_to_latent = nn.Linear(self.n_embed, self.latent_size)
 
