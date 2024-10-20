@@ -46,6 +46,7 @@ class AE_ply(nn.Module):
     x, coords = self.mpvConv2((x, coords))
     x, _ = self.mpvConv3((x,coords)) # (batch_size, latent_size, Num_points)
     x = self.downsampling_NumPoints(x) # (batch_size, Num_points=11597, n_embed)
+    print(f'auto_enc before encoder: {x.shape}')
     x, k_enc, v_enc = self.encoder(x) # (batch_size, Num_points, n_embed)
     x = self.embed_to_latent(x) # (batch_size, Num_points, latent_size)
     return x, k_enc, v_enc
