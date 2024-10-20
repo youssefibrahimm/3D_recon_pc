@@ -62,13 +62,19 @@ class MultiHeadAttention(nn.Module):
     for i, h in enumerate(self.heads):
       out_i = h(x)[0]
       print(f"Shape of head {i} output: {out_i.shape}")
-
-    out = torch.cat([h(x)[0] for h in self.heads], dim = -1)
-
-    # get the keys and values to pass them from the encoder to the decoder for cross-attention
-    keys = torch.cat([h(x)[1] for h in self.heads], dim = -1)
-    values = torch.cat([h(x)[2] for h in self.heads], dim = -1)
-    queries = torch.cat([h(x)[3] for h in self.heads], dim = -1)
+    if k_cross is not None and q_cross is not None and v_cross is not None:
+      # Use cross-attention
+      out = torch.cat([h(x)[0] for h in self.heads], dim=-1)
+      keys = torch.cat([k_cross], dim=-1)
+      values = torch.cat([v_cross], dim=-1)
+      queries = torch.cat([q_cross], dim=-1)
+    else:
+      # Use self-attention
+      out = torch.cat([h(x)[0] for h in self.heads], dim = -1)
+      # get the keys and values to pass them from the encoder to the decoder for cross-attention
+      keys = torch.cat([h(x)[1] for h in self.heads], dim = -1)
+      values = torch.cat([h(x)[2] for h in self.heads], dim = -1)
+      queries = torch.cat([h(x)[3] for h in self.heads], dim = -1)
 
     # Scales the head_size_Multi * num_heads to n_embed for the ability to call multiple heads with the correct initialization
     out = self.projection(out) # (B, T, n_embed)
@@ -98,10 +104,9 @@ class encoderBlock(nn.Module):
     self.LN2 = nn.LayerNorm(n_embed)
 
   def forward(self, x):
-    x =  x + self.multi_head(self.LN1(x))[0] # Residual connection
+    multi_head_out, k, v, _ =  self.multi_head(self.LN1(x)) # Residual connection
+    x = x + multi_head_out
     x = x + self.feed_forward(self.LN2(x))# Residual connection
-    k = self.multi_head(x)[1]
-    v = self.multi_head(x)[2]
     return x.to(device), k.to(device), v.to(device)
 #-------------------------------------------------------------------------------
 class DecoderBlock(nn.Module):
