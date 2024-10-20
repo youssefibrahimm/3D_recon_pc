@@ -8,8 +8,17 @@ from Transformer_parts import encoderBlock
 import torch.nn as nn
 
 class Transpose_layer(nn.Module):
-  def forward(self,x):
-    return x.transpose(1,2)
+    def forward(self, x):
+        """
+        Transposes the input tensor along dimensions 1 and 2.
+
+        Args:
+            x (torch.Tensor): The input tensor of shape (batch_size, channels, sequence_length).
+
+        Returns:
+            torch.Tensor: The transposed tensor of shape (batch_size, sequence_length, channels).
+        """
+        return x.transpose(1, 2)
     
 class AE_ply(nn.Module):
   def __init__(self, latent_size, n_embed, kernel_size, dropout=0.3):
