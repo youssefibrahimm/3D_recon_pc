@@ -25,7 +25,7 @@ class DynamicDecoder(nn.Module):
         self.fc3 = nn.Linear(512, max_point_size * 3)  # Output max number of points
 
         # Multi-Head Attention for dynamic selection
-        self.attention_layer = MultiHeadAttention(num_heads=num_heads, dropout=dropout, n_embed=n_embed, decoder=False)
+        # self.attention_layer = MultiHeadAttention(num_heads=num_heads, dropout=dropout, n_embed=n_embed, decoder=False)
 
         # Further processing with feedforward layers and decoder blocks
         self.decoder_block = DecoderBlock(num_heads=num_heads, dropout=dropout, n_embed=n_embed)
@@ -44,10 +44,10 @@ class DynamicDecoder(nn.Module):
         points = points.view(-1, self.max_point_size, 3)  # Reshape to (batch_size, max_point_size, 3)
 
         # Attention mechanism to focus on key points
-        attention_output, _, _, _ = self.attention_layer(points)
+        # attention_output, _, _, _ = self.attention_layer(points)
 
         # Use the attention results with the decoder block
-        x = self.decoder_block(attention_output, k_encoder, v_encoder)
+        x = self.decoder_block(points, k_encoder, v_encoder)
 
         # Select final points dynamically based on point_size
         selected_points = x[:, :self.point_size, :]  # Dynamic point selection shape: (batch_size, point_size, 3)
