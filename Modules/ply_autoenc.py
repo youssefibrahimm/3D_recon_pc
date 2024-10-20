@@ -57,4 +57,4 @@ class AE_ply(nn.Module):
     out_down = self.downsampling_NumPoints(x) # (batch_size, Num_points=11597, n_embed)
     print(f'auto_enc before encoder: {out_down.shape}')
     enc_out, k_enc, v_enc = self.encoder(out_down) # (batch_size, Num_points, n_embed)
-    return enc_out, k_enc, v_enc
+    return enc_out, k_enc, v_enc, enc_out.shape[1]

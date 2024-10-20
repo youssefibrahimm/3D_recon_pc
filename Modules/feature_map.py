@@ -76,6 +76,6 @@ class feature_map_AE(nn.Module):
   
   def forward(self, ply):
    feat_map, coords = self.feat_map(ply)
-   x, k_enc, v_enc = self.Auto_enc((feat_map, coords))
-   return x, k_enc, v_enc
+   x, k_enc, v_enc, first_Dynamic_decoder_linear_layer = self.Auto_enc((feat_map, coords))
+   return x, k_enc, v_enc, first_Dynamic_decoder_linear_layer
    
