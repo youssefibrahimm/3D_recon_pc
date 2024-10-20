@@ -108,7 +108,7 @@ class DecoderBlock(nn.Module):
   def __init__(self, num_heads, n_embed, dropout):
     super(DecoderBlock, self).__init__()
     self.multi_head = MultiHeadAttention(num_heads, dropout, n_embed, cross_attention=True, decoder=True) # decoder is initialized to True
-    self.feed_forward = FeedForward(n_embed)
+    self.feed_forward = FeedForward(n_embed, dropout)
     self.LN1 = nn.LayerNorm(n_embed)
     self.LN2 = nn.LayerNorm(n_embed)
     self.LN3 = nn.LayerNorm(n_embed)
