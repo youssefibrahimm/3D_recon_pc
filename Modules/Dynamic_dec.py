@@ -24,7 +24,7 @@ class DynamicDecoder(nn.Module):
         self.fc2 = nn.Linear(512, 512)
         self.fc3 = nn.Linear(512, max_point_size * 3)  # Output max number of points
 
-        self.embed_to_latent = nn.Linear(self.n_embed, self.latent_size)
+        self.embed_to_latent = nn.Linear(n_embed, self.latent_size)
         # self.latent_to_embed = nn.Linear(self.latent_size, self.n_embed),
 
         # Further processing with feedforward layers and decoder blocks
