@@ -23,10 +23,6 @@ class DynamicDecoder(nn.Module):
         self.n_embed = n_embed
         self.ply_features = ply_features
         
-        # Fully connected layers for initial reconstruction
-        self.fc1 = nn.Linear(579, 612)
-        self.fc2 = nn.Linear(612, 612)
-        self.fc3 = nn.Linear(612, min_point_size * 2)  
 
         self.embed_to_latent = nn.Linear(self.n_embed, self.latent_size)
         # self.latent_to_embed = nn.Linear(self.latent_size, self.n_embed),
@@ -63,9 +59,9 @@ class DynamicDecoder(nn.Module):
         :param v_encoder: Encoder's values (from multi-head attention in encoder)
         """
         # Fully connected layers for initial reconstruction
-        self.fc1 = nn.Linear(first_Dynamic_decoder_linear_layer, 1024)
-        self.fc2 = nn.Linear(1024, 2048)
-        self.fc3 = nn.Linear(612, self.min_point_size * 2)  
+        self.fc1 = nn.Linear(first_Dynamic_decoder_linear_layer, 1024, device=device)
+        self.fc2 = nn.Linear(1024, 2048, device=device) 
+        self.fc3 = nn.Linear(2048, self.min_point_size * 2, device=device)  
         print(f"embeds: {embeds.shape}")
         # Use the attention results with the decoder block
         attentive_points = self.decoder_block(embeds, k_encoder, v_encoder)
