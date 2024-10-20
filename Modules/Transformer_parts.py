@@ -32,6 +32,7 @@ class Head(nn.Module):
 
   def forward(self, x):
     B, T, C = x.shape
+    print(f'before k, q, v {x.shape}')
     if self.cross_attention:
       k = self.keycross(x)
       q = self.querycross(x)
