@@ -4,7 +4,7 @@ import torch.nn as nn
 from Modules.feature_map import feature_map_AE
 class TDR(nn.Module):
 
-    def __init__(self, n_embed, point_size, latent_size, num_heads, min_point_size, kernel_size, width_multiplier, ply_features, stride_conv_upsampling=5, dropout=0.3):
+    def __init__(self, n_embed, point_size, latent_size, num_heads, min_point_size, kernel_size, width_multiplier, ply_features, stride_conv_upsampling=5, dropout=0.3, loss= nn.MSELoss()):
         super(TDR, self).__init__()
         self.feature_map = feature_map_AE(n_embed=n_embed, kernel_size=kernel_size, 
                                           width_multiplier=width_multiplier, num_points=point_size, dropout=dropout)
@@ -18,7 +18,7 @@ class TDR(nn.Module):
                                           ply_features=ply_features,
                                           stride_conv_upsampling=stride_conv_upsampling
                                           )
-        self.mse = nn.MSELoss()
+        self.mse = loss
 
     def forward(self, x):
         out_features, k_enc, v_enc, first_Dynamic_decoder_linear_layer = self.feature_map(x) # shape out_features: (batch_size, Num_points, embed)

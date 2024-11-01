@@ -57,7 +57,9 @@ class DynamicDecoder(nn.Module):
         :param embeds: Embedded representation of the input point cloud (from auto-encoder)
         :param k_encoder: Encoder's keys (from multi-head attention in encoder)
         :param v_encoder: Encoder's values (from multi-head attention in encoder)
+
         """
+        print(f'first_Dynamic_decoder_linear_layer: {first_Dynamic_decoder_linear_layer}')
         # Fully connected layers for initial reconstruction
         self.fc1 = nn.Linear(first_Dynamic_decoder_linear_layer, 1024, device=device)
         self.fc2 = nn.Linear(1024, 2048, device=device) 

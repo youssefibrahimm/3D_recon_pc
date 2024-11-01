@@ -48,5 +48,5 @@ class feature_map_AE(nn.Module):
     features_1, coords = self.mpvcnn(ply) # (batch_size, num_of_feat, num_of_points)
     features_2 = self.downsampling_NumPoints(features_1)
     out_feat_encoder, k_enc, v_enc = self.encoder(features_2) # (batch_size, num_of_points, n_embed)
-    return out_feat_encoder, k_enc, v_enc, coords
+    return out_feat_encoder, k_enc, v_enc, out_feat_encoder.size(1)
 
