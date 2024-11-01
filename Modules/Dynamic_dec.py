@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from Modules.Transformer_parts import MultiHeadAttention, DecoderBlock
+from Modules.Transformer_parts import DecoderBlock
 from Modules.ply_autoenc import Transpose_layer
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 class DynamicDecoder(nn.Module):

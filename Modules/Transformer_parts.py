@@ -26,7 +26,6 @@ class Head(nn.Module):
 
   def forward(self, x):
     B, T, C = x.shape
-    print(f'before k, q, v {x.shape}')
     if self.cross_attention:
       k = self.keycross(x)
       q = self.querycross(x)
@@ -61,7 +60,6 @@ class MultiHeadAttention(nn.Module):
     # concatenating them on the head_size dim = (B, T, head_size_Multi * num_heads) which gives the wanted head size (head_size)
     for i, h in enumerate(self.heads):
       out_i = h(x)[0]
-      print(f"Shape of head {i} output: {out_i.shape}")
     if k_cross is not None and q_cross is not None and v_cross is not None:
       # Use cross-attention
       out = torch.cat([h(x)[0] for h in self.heads], dim=-1)
