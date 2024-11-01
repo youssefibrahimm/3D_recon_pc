@@ -28,10 +28,11 @@ class PointCloudAutoencoder(nn.Module):
     """
     super(PointCloudAutoencoder, self).__init__()
 
-    self.decoder = Decoder(num_latent_features, num_points, dropout_probability)
-    self.encoder = Encoder(num_latent_features, num_embed_features, kernel_size, num_points, dropout_probability)
+    self.decoder = Decoder(num_latent_features, num_points, dropout=dropout_probability)
+    self.encoder = Encoder(num_latent_features, num_embed_features, kernel_size, num_points, dropout=dropout_probability)
     self.mpvcnnpp = MPVCNN2(num_input_features)
-
+     
+     
     self.reconstruction_linear_1 = nn.Linear(num_input_features * num_points, 1024)
     self.reconstruction_linear_2 = nn.Linear(1024, num_latent_features)
 
