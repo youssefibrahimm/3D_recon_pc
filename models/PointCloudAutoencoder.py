@@ -27,12 +27,16 @@ class PointCloudAutoencoder(nn.Module):
         dropout_probability (float, optional): The probability of dropout in the layers. Defaults to 0.3.
     """
     super(PointCloudAutoencoder, self).__init__()
+    self.latent_size = num_latent_features
+    self.n_embed = num_embed_features
+    self.kernel_size = kernel_size
+    self.point_size = num_points
+    self.num_feat = num_input_features
 
     self.decoder = Decoder(num_latent_features, num_points, dropout=dropout_probability)
-    self.encoder = Encoder(num_latent_features, num_embed_features, kernel_size, num_points, dropout=dropout_probability)
+    self.encoder = Encoder(num_latent_features, num_embed_features, kernel_size, num_points, dropout_probability)
     self.mpvcnnpp = MPVCNN2(num_input_features)
-     
-     
+
     self.reconstruction_linear_1 = nn.Linear(num_input_features * num_points, 1024)
     self.reconstruction_linear_2 = nn.Linear(1024, num_latent_features)
 
@@ -68,12 +72,13 @@ class PointCloudAutoencoder(nn.Module):
     reconstruction_enc = self.decoder(encoded_points)
 
     # Compute the enhanced attention mechanism
-    combined_features = torch.cat([reconstruction_mpv, reconstruction_enc], dim=2)
+    combined_features = torch.cat([reconstruction_mpv, reconstruction_enc], dim=2).transpose(2, 1)
+    combined_features = self.dropout(combined_features)
     attention_weights = self.weighted_fusion_linear(combined_features)
-    attention_weights = attention_weights.transpose(2, 1) @ combined_features.transpose(2, 1) * (combined_features.size(2) ** -0.5)
+    attention_weights = attention_weights.transpose(2, 1) @ combined_features * (combined_features.size(2) ** -0.5)
     attention_weights = F.softmax(attention_weights, dim=1)
     attention_weights = self.dropout(attention_weights)
 
     # Compute the weighted sum of coordinates based on attention weights
-    output_points = torch.bmm(attention_weights, combined_features, dim=2).transpose(2, 1)
+    output_points = torch.bmm(attention_weights, combined_features.transpose(2,1)).transpose(2, 1)
     return output_points
