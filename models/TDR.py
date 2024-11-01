@@ -4,10 +4,10 @@ import torch.nn as nn
 from Modules.feature_map import feature_map_AE
 class TDR(nn.Module):
 
-    def __init__(self, n_embed, point_size, latent_size, num_of_feat, num_heads, min_point_size, kernel_size, width_multiplier, ply_features, stride_conv_upsampling=5, isConv=True, dropout=0.3):
+    def __init__(self, n_embed, point_size, latent_size, num_heads, min_point_size, kernel_size, width_multiplier, ply_features, stride_conv_upsampling=5, dropout=0.3):
         super(TDR, self).__init__()
-        self.feature_map = feature_map_AE(latent_size=latent_size, num_of_feat=num_of_feat, n_embed=n_embed, kernel_size=kernel_size, 
-                                          width_multiplier=width_multiplier, num_points=point_size, isConv=isConv, dropout=dropout)
+        self.feature_map = feature_map_AE(n_embed=n_embed, kernel_size=kernel_size, 
+                                          width_multiplier=width_multiplier, num_points=point_size, dropout=dropout)
         self.dynamic_dec = DynamicDecoder(latent_size=latent_size, 
                                           point_size=point_size,
                                           min_point_size=min_point_size,
