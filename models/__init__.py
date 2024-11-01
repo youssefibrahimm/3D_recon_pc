@@ -1,0 +1,2 @@
+from models.TDR import TDR
+from models.PointCloudAutoencoder import PointCloudAutoencoder
