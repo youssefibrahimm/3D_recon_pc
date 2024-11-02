@@ -20,6 +20,8 @@ class Decoder(nn.Module):
         activation_fn (type[nn.Module]): The activation function class used in each layer. Defaults to nn.ReLU.
         """
         super().__init__()
+        assert len(hidden_sizes) > 0, f'Hidden_sizes must be non-empty, but got {hidden_sizes}'
+        assert point_size*3 >= hidden_sizes[-1], f'Last layer must have at least as many neurons as the number of points, but got {hidden_sizes[-1]} and {point_size*3}'
         self._latent_size = latent_size
         self._point_size = point_size
         self._dropout = dropout

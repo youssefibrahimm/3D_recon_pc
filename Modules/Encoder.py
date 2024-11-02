@@ -7,7 +7,6 @@ class Encoder(nn.Module):
   def __init__(
       self,
       latent_size: int,
-      n_embed: int,
       kernel_size: int,
       point_size: int,
       dropout: float = 0.3,
@@ -39,7 +38,6 @@ class Encoder(nn.Module):
 
     # Save the input parameters
     self.latent_size = latent_size
-    self.n_embed = n_embed
     self.kernel_size = kernel_size
     self.point_size = point_size
     self.dropout = dropout
