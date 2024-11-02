@@ -39,7 +39,10 @@ class PointCloudAutoencoder(nn.Module):
     self.dropout = nn.Dropout(dropout_probability)
     self.decoder = Decoder(num_latent_features, num_points, dropout=dropout_probability, hidden_sizes=hidden_sizes_decoder)
     self.encoder = Encoder(num_latent_features, kernel_size, num_points, dropout_probability)
+    # Initialize MPVCNN2 and freeze its parameters
     self.mpvcnnpp = MPVCNN2(num_input_features)
+    for param in self.mpvcnnpp.parameters():
+      param.requires_grad = False  # Explicitly freeze MPVCNN2 parameters
 
     sizes = [num_input_features] + hidden_sizes_AE + [num_latent_features]
     layers = []
@@ -72,9 +75,10 @@ class PointCloudAutoencoder(nn.Module):
 
     # Apply average pooling over the point_size dimension
     pooled_features = F.adaptive_avg_pool1d(features, 1)  # Output shape will be (batch_size, num_feat, 1)
-
+    print(pooled_features.shape)
     # Flatten the features and compute the latent reconstruction
-    flattened_features = features.view(pooled_features.size(0), -1)
+    flattened_features = pooled_features.view(pooled_features.size(0), -1)
+    print(flattened_features.shape)
     latent_reconstruction = self.AE(flattened_features)
 
     # Decode the latent reconstruction with the two decoders
