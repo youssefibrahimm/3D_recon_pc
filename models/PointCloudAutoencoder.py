@@ -75,10 +75,9 @@ class PointCloudAutoencoder(nn.Module):
 
     # Apply average pooling over the point_size dimension
     pooled_features = F.adaptive_avg_pool1d(features, 1)  # Output shape will be (batch_size, num_feat, 1)
-    print(pooled_features.shape)
+
     # Flatten the features and compute the latent reconstruction
     flattened_features = pooled_features.view(pooled_features.size(0), -1)
-    print(flattened_features.shape)
     latent_reconstruction = self.AE(flattened_features)
 
     # Decode the latent reconstruction with the two decoders
