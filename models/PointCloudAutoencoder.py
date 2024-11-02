@@ -13,7 +13,8 @@ class PointCloudAutoencoder(nn.Module):
       kernel_size: int,
       num_points: int,
       dropout_probability: float = 0.3,
-      hidden_sizes: list[int] = [1024, 2048, 4096], 
+      hidden_sizes_decoder: list[int] = [1024, 2048, 4096], 
+      hidden_sizes_AE: list[int] = [128, 256, 512]
 
   ):
     """
@@ -28,21 +29,27 @@ class PointCloudAutoencoder(nn.Module):
         dropout_probability (float, optional): The probability of dropout in the layers. Defaults to 0.3.
     """
     super(PointCloudAutoencoder, self).__init__()
+    assert num_latent_features >= hidden_sizes_AE[-1], f'Last layer must have at least as many neurons as the latent space, but got {hidden_sizes_AE[-1]} and {num_latent_features}'
+   
     self.latent_size = num_latent_features
     self.kernel_size = kernel_size
     self.point_size = num_points
     self.num_feat = num_input_features
     
-
-    self.decoder = Decoder(num_latent_features, num_points, dropout=dropout_probability, hidden_sizes=hidden_sizes)
+    self.dropout = nn.Dropout(dropout_probability)
+    self.decoder = Decoder(num_latent_features, num_points, dropout=dropout_probability, hidden_sizes=hidden_sizes_decoder)
     self.encoder = Encoder(num_latent_features, kernel_size, num_points, dropout_probability)
     self.mpvcnnpp = MPVCNN2(num_input_features)
 
-    self.reconstruction_linear_1 = nn.Linear(num_input_features * num_points, 1024)
-    self.reconstruction_linear_2 = nn.Linear(1024, num_latent_features)
+    sizes = [num_input_features] + hidden_sizes_AE + [num_latent_features]
+    layers = []
+    for i in range(len(sizes) - 1):
+      layers.append(nn.Linear(sizes[i], sizes[i+1]))
+      layers.append(self.dropout)
+      layers.append(nn.ReLU())
+    self.AE = nn.Sequential(*layers)
 
     self.weighted_fusion_linear = nn.Linear(num_points, num_points)
-    self.dropout = nn.Dropout(dropout_probability)
 
   def forward(self, input_points: torch.Tensor) -> torch.Tensor:
     """
@@ -63,10 +70,12 @@ class PointCloudAutoencoder(nn.Module):
     # Compute features with MPVCNN2
     features, _ = self.mpvcnnpp(input_points)
 
+    # Apply average pooling over the point_size dimension
+    pooled_features = F.adaptive_avg_pool1d(features, 1)  # Output shape will be (batch_size, num_feat, 1)
+
     # Flatten the features and compute the latent reconstruction
-    flattened_features = features.view(features.size(0), -1)
-    x = F.relu(self.reconstruction_linear_1(flattened_features))
-    latent_reconstruction = F.relu(self.reconstruction_linear_2(x))
+    flattened_features = features.view(pooled_features.size(0), -1)
+    latent_reconstruction = self.AE(flattened_features)
 
     # Decode the latent reconstruction with the two decoders
     reconstruction_mpv = self.decoder(latent_reconstruction)

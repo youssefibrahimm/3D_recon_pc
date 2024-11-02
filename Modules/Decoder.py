@@ -8,7 +8,7 @@ class Decoder(nn.Module):
         hidden_sizes: list[int] = [1024, 2048, 4096], 
         dropout: float = 0.3, 
         activation_fn: type[nn.Module] = nn.ReLU
-    ) -> None:
+    ):
         """
         Initialize the Decoder module.
 
