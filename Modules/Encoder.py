@@ -27,8 +27,6 @@ class Encoder(nn.Module):
     # Check that the input parameters are not None
     if latent_size is None:
       raise ValueError("latent_size is null")
-    if n_embed is None:
-      raise ValueError("n_embed is null")
     if kernel_size is None:
       raise ValueError("kernel_size is null")
     if point_size is None:
